@@ -38,7 +38,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 
 );
-our $VERSION = '1.00';
+our $VERSION = '1.01';
 
 # -----------------------------------------------
 
@@ -96,12 +96,9 @@ sub convert
 	my(@dummy)			= $$self{'_db_engine'} -> detect_table($new_table_name, 1);
 	my($count)			= 0;
 
-	if ($$self{'_verbose'})
-	{
-		$self -> log("Table: $new_table_name. Columns:");
-		$self -> log($_) for map{$count++; "$count: $_"} @lc_column_name;
-		$self -> log();
-	}
+	$self -> log("Table: $new_table_name. Columns:");
+	$self -> log($_) for map{$count++; "$count: $_"} @lc_column_name;
+	$self -> log();
 
 	if ($#dummy >= 0)
 	{
@@ -130,7 +127,7 @@ sub DESTROY
 {
 	my($self) = @_;
 
-	$self -> save_log();
+	$self -> save_log() if ($$self{'_verbose'});
 
 }	# End of DESTROY.
 
@@ -249,22 +246,16 @@ sub get_access_table_names
 	my(@table_name)		= sort $$self{'_access_dbh'} -> tables();
 	my($count)			= 0;
 
-	if ($$self{'_verbose'})
-	{
-		$self -> log('Table names - raw list:');
-		$self -> log($_) for map{$count++; "$count: $_"} @table_name;
-		$self -> log();
-	}
+	$self -> log('Table names - raw list:');
+	$self -> log($_) for map{$count++; "$count: $_"} @table_name;
+	$self -> log();
 
 	@table_name	= map{s/^$$self{'_quote'}.+?$$self{'_quote'}\.$$self{'_quote'}(.+)$$self{'_quote'}/$1/; $1} @table_name;
 	$count		= 0;
 
-	if ($$self{'_verbose'})
-	{
-		$self -> log('Table names - clean list:');
-		$self -> log($_) for map{$count++; "$count: $_"} @table_name;
-		$self -> log();
-	}
+	$self -> log('Table names - clean list:');
+	$self -> log($_) for map{$count++; "$count: $_"} @table_name;
+	$self -> log();
 
 	if ($want && ($#$want >= 0) )
 	{
@@ -275,12 +266,9 @@ sub get_access_table_names
 		@table_name		= grep{$_} map{my($name) = lc; $want{$name} ? $_ : 0} @table_name;
 		$count			= 0;
 
-		if ($$self{'_verbose'})
-		{
-			$self -> log('Table names - wanted list:');
-			$self -> log($_) for map{$count++; "$count: $_"} @table_name;
-			$self -> log();
-		}
+		$self -> log('Table names - wanted list:');
+		$self -> log($_) for map{$count++; "$count: $_"} @table_name;
+		$self -> log();
 	}
 
 	$$self{'_table'} = \@table_name;
