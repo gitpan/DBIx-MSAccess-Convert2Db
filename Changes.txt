@@ -1,4 +1,16 @@
-Revision history for Perl extension DBIx::MSAccess:Convert2Db.
+Revision history for Perl extension DBIx::MSAccess::Convert2Db.
+
+1.03  Fri Apr 16 11:09:36 2004
+	- There are no code changes in this version
+	- Stop shipping Makefile.PL. Encourage users to install Module::Build, and to
+		then install this module via the mantra:
+			perl Build.PL
+			perl Build
+			perl Build test
+			perl Build install
+		Thanx to Mike Castle for reporting an error with Makefile.PL
+	- Fix a cut-and-paste error in the POD where DBIx::MSAccess::Convert2Db had the
+		last colon missing in 7 lines. Thanx to Mike Castle for reporting this
 
 1.02  Wed Apr  7 11:46:41 2004
 	- Recent changes to DBIx::SQLEngine resulted in the following SQL being generated to

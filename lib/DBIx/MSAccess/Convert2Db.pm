@@ -38,7 +38,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 
 );
-our $VERSION = '1.02';
+our $VERSION = '1.03';
 
 # -----------------------------------------------
 
@@ -381,13 +381,13 @@ __END__
 
 =head1 NAME
 
-C<DBIx::MSAccess:Convert2Db> - Convert an MS Access database into a MySQL/Postgres/Other database
+C<DBIx::MSAccess::Convert2Db> - Convert an MS Access database into a MySQL/Postgres/Other database
 
 =head1 Synopsis
 
-	use DBIx::MSAccess:Convert2Db;
+	use DBIx::MSAccess::Convert2Db;
 
-	my($obj) = DBIx::MSAccess:Convert2Db -> new
+	my($obj) = DBIx::MSAccess::Convert2Db -> new
 	(
 	    access_dsn    => 'in',
 	    db_username   => ($^O eq 'MSWin32') ? 'root' : 'postgres',
@@ -408,7 +408,7 @@ C<DBIx::MSAccess:Convert2Db> - Convert an MS Access database into a MySQL/Postgr
 
 =head1 Description
 
-C<DBIx::MSAccess:Convert2Db> is a pure Perl module.
+C<DBIx::MSAccess::Convert2Db> is a pure Perl module.
 
 It can convert an MS Access database into one in MySQL/Postgres/Other format.
 
@@ -420,6 +420,10 @@ Hopefully, this means the output database is an exact copy of the input one, apa
 Things to note:
 
 =over 4
+
+=item The module does not create the output database
+
+You do that.
 
 =item The module uses DBIx::SQLEngine to achieve a degree of database vendor-independence
 
@@ -445,7 +449,7 @@ being the only ones included in the list.
 
 Use the option new(lower_case => 1) to activate this action.
 
-=item All output table names have ' ' characters in their names replaced by '_'
+=item All output table names have /\s/ characters in their names replaced by '_'
 
 =item All output column names are from the MS Access database
 
@@ -482,11 +486,11 @@ help on unpacking and installing each type of distro.
 
 =head1 Constructor and initialization
 
-new(...) returns a C<DBIx::MSAccess:Convert2Db> object.
+new(...) returns a C<DBIx::MSAccess::Convert2Db> object.
 
 This is the class's contructor.
 
-Usage: DBIx::MSAccess:Convert2Db -> new().
+Usage: DBIx::MSAccess::Convert2Db -> new().
 
 This option takes a set of options.
 
@@ -602,7 +606,7 @@ See Changes.txt.
 
 =head1 Author
 
-C<DBIx::MSAccess:Convert2Db> was written by Ron Savage I<E<lt>ron@savage.net.auE<gt>> in 2004.
+C<DBIx::MSAccess::Convert2Db> was written by Ron Savage I<E<lt>ron@savage.net.auE<gt>> in 2004.
 
 Home page: http://savage.net.au/index.html
 
