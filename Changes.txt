@@ -1,0 +1,4 @@
+Revision history for Perl extension DBIx::MSAccess:Convert2Db.
+
+1.00  Tue Jan 20 12:37:29 2004
+	- Original version

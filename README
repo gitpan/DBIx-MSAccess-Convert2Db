@@ -1,0 +1,219 @@
+NAME
+    "DBIx::MSAccess:Convert2Db" - Convert an MS Access database into a
+    MySQL/Postgres/Other database
+
+Synopsis
+            use DBIx::MSAccess:Convert2Db;
+
+            my($obj) = DBIx::MSAccess:Convert2Db -> new
+            (
+                access_dsn    => 'in',
+                db_username   => ($^O eq 'MSWin32') ? 'root' : 'postgres',
+                db_password   => ($^O eq 'MSWin32') ? 'pass' : '',
+                db_name       => 'out',
+                driver        => ($^O eq 'MSWin32') ? 'mysql' : 'Pg',
+                lower_case    => 1,
+                null_to_blank => 1,
+                verbose       => 1,
+            );
+
+            $obj -> do('drop database out');
+            $obj -> do('create database out');
+
+            my($table_name) = $obj -> get_access_table_names(['table a', 'table b']);
+
+            $obj -> convert($_) for @$table_name;
+
+Description
+    "DBIx::MSAccess:Convert2Db" is a pure Perl module.
+
+    It can convert an MS Access database into one in MySQL/Postgres/Other
+    format.
+
+    The conversion is mindless. In particular, this version does not even
+    use the Date::MSAccess module to convert dates.
+
+    Hopefully, this means the output database is an exact copy of the input
+    one, apart from perhaps some column truncation.
+
+    Things to note:
+
+    The module uses DBIx::SQLEngine to achieve a degree of database
+    vendor-independence
+    The module uses DBD::ODBC to connect via a DSN to MS Access
+        See below for more on this DSN (Data Source Name). Search down for
+        'access_dsn'.
+
+    All candidate output table names are obtained from the MS Access
+    database
+        You can have the module ignore input tables or views by passing to
+        get_access_table_names() an array ref of the names of those tables
+        you wish to output.
+
+                my($table_name) = $obj -> get_access_table_names();
+
+        returns an array ref of all table names in the MS Access database,
+        so all table names will be passed to convert().
+
+                my($table_name) = $obj -> get_access_table_names(['table a', 'table b']);
+
+        returns an array ref of table names to be passed to convert(), with
+        tables called 'table a' and 'table b' being the only ones included
+        in the list.
+
+    All output table names can be converted to lower case
+        Use the option new(lower_case => 1) to activate this action.
+
+    All output table names have ' ' characters in their names replaced by
+    '_'
+    All output column names are from the MS Access database
+    All output column names have MySQL/Postgres reserved words prefixed with
+    '_'
+        That is, $original_column_name is replaced by
+        "_$original_column_name".
+
+        The only known case (20-Jan-2004) is any column named 'Order', which
+        will be called '_order' in the output database.
+
+    All output column names can be converted to lower case
+        Use the option new(lower_case => 1) to activate this action.
+
+    All output columns are of type varchar(255)
+        Note: This will cause data to be truncated if input columns are
+        longer than 255 characters.
+
+    This module has only been tested under MS Windows and MySQL
+        It does contain, I believe, all the code required to run under
+        Postgres. However, I have never tried to use a DSN under Unix, so
+        YMMV.
+
+Distributions
+    This module is available both as a Unix-style distro (*.tgz) and an
+    ActiveState-style distro (*.ppd). The latter is shipped in a *.zip file.
+
+    See http://savage.net.au/Perl-modules.html for details.
+
+    See http://savage.net.au/Perl-modules/html/installing-a-module.html for
+    help on unpacking and installing each type of distro.
+
+Constructor and initialization
+    new(...) returns a "DBIx::MSAccess:Convert2Db" object.
+
+    This is the class's contructor.
+
+    Usage: DBIx::MSAccess:Convert2Db -> new().
+
+    This option takes a set of options.
+
+    access_dsn
+        The DSN (Data Source Name) of the MS Access database.
+
+        To start creating a DSN under Win2K, say, go to
+        Start/Settings/Control Panel/Admin tools/Data Source (ODBC)/System
+        DSN.
+
+        Note: A System DSN is preferred because it is visible to all users,
+        not just the currently logged in user.
+
+        This option is mandatory.
+
+    db_username
+        The user name to use to log in to the output database.
+
+        This might be something like
+
+                ($^O eq 'MSWin32') ? 'root' : 'postgres'
+
+        if you are using MySQL under Windows and Postgres under Unix.
+
+        The default is the empty string.
+
+    db_password
+        The password to use to log in to the output database.
+
+        This might be something like
+
+                ($^O eq 'MSWin32') ? 'pass' : ''
+
+        if you are using MySQL under Windows and Postgres under Unix.
+
+        The default is the empty string.
+
+    db_name
+        The output database name.
+
+        This option is mandatory.
+
+    driver
+        The output database driver.
+
+        This might be something like
+
+                ($^O eq 'MSWin32') ? 'mysql' : 'Pg'
+
+        This option is mandatory.
+
+    lower_case
+        An option, either 0 or 1, to activate the conversion of all table
+        names and column names to lower case, in the output database.
+
+        The default is 0.
+
+    null_to_blank
+        An option, either 0 or 1, to activate the conversion of all null
+        values to the empty string, in the output database.
+
+        The default is 0.
+
+    verbose
+        An option, either 0 or 1, to activate the writing to disk of various
+        bits of information.
+
+        The default is 0.
+
+        The output disk file name is determined by this code:
+
+                $$self{'_temp'}          = ($^O eq 'MSWin32') ? 'temp' : 'tmp';
+                $$self{'_log_file_name'} = "/$$self{'_temp'}/msaccess2db.log";
+
+Method: get_access_table_names([An array ref of table names to output])
+    Returns an array ref of table name to be passed to convert().
+
+Method: convert($table_name)
+    Returns nothing.
+
+    Converts one table from MS Access format to MySQL/Postgres/Other format.
+
+    It's normally called like this:
+
+            my($table_name) = $obj -> get_access_table_names();
+
+            $obj -> convert($_) for @$table_name;
+
+Example code
+    See the examples/ directory in the distro.
+
+    Note: The example uses a module called Error.
+
+    Note: Activestate-style distros do not contain this directory :-(.
+
+Required Modules
+    Carp, DBI, DBD::ODBD, DBIx::SQLEngine.
+
+Changes
+    See Changes.txt.
+
+Author
+    "DBIx::MSAccess:Convert2Db" was written by Ron Savage
+    *<ron@savage.net.au>* in 2004.
+
+    Home page: http://savage.net.au/index.html
+
+Copyright
+    Australian copyright (c) 2004, Ron Savage. All rights reserved.
+
+            All Programs of mine are 'OSI Certified Open Source Software';
+            you can redistribute them and/or modify them under the terms of
+            The Artistic License, a copy of which is available at:
+            http://www.opensource.org/licenses/index.html
+

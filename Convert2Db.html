@@ -1,0 +1,323 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>C&lt;DBIx::MSAccess:Convert2Db&gt; - Convert an MS Access database into a MySQL/Postgres/Other database</title>
+<link rev="made" href="mailto:" />
+</head>
+
+<body style="background-color: white">
+
+<p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synopsis">Synopsis</a></li>
+	<li><a href="#description">Description</a></li>
+	<li><a href="#distributions">Distributions</a></li>
+	<li><a href="#constructor_and_initialization">Constructor and initialization</a></li>
+	<li><a href="#method:_get_access_table_names([an_array_ref_of_table_names_to_output])">Method: get_access_table_names([An array ref of table names to output])</a></li>
+	<li><a href="#method:_convert($table_name)">Method: <code>convert($table_name)</code></a></li>
+	<li><a href="#example_code">Example code</a></li>
+	<li><a href="#required_modules">Required Modules</a></li>
+	<li><a href="#changes">Changes</a></li>
+	<li><a href="#author">Author</a></li>
+	<li><a href="#copyright">Copyright</a></li>
+</ul>
+<!-- INDEX END -->
+
+<hr />
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p><code>DBIx::MSAccess:Convert2Db</code> - Convert an MS Access database into a MySQL/Postgres/Other database</p>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">Synopsis</a></h1>
+<pre>
+        use DBIx::MSAccess:Convert2Db;</pre>
+<pre>
+        my($obj) = DBIx::MSAccess:Convert2Db -&gt; new
+        (
+            access_dsn    =&gt; 'in',
+            db_username   =&gt; ($^O eq 'MSWin32') ? 'root' : 'postgres',
+            db_password   =&gt; ($^O eq 'MSWin32') ? 'pass' : '',
+            db_name       =&gt; 'out',
+            driver        =&gt; ($^O eq 'MSWin32') ? 'mysql' : 'Pg',
+            lower_case    =&gt; 1,
+            null_to_blank =&gt; 1,
+            verbose       =&gt; 1,
+        );</pre>
+<pre>
+        $obj -&gt; do('drop database out');
+        $obj -&gt; do('create database out');</pre>
+<pre>
+        my($table_name) = $obj -&gt; get_access_table_names(['table a', 'table b']);</pre>
+<pre>
+        $obj -&gt; convert($_) for @$table_name;</pre>
+<p>
+</p>
+<hr />
+<h1><a name="description">Description</a></h1>
+<p><code>DBIx::MSAccess:Convert2Db</code> is a pure Perl module.</p>
+<p>It can convert an MS Access database into one in MySQL/Postgres/Other format.</p>
+<p>The conversion is mindless. In particular, this version does not even use the Date::MSAccess module to convert
+dates.</p>
+<p>Hopefully, this means the output database is an exact copy of the input one, apart from perhaps some column truncation.</p>
+<p>Things to note:</p>
+<dl>
+<dt><strong><a name="item_the_module_uses_dbix%3a%3asqlengine_to_achieve_a_d">The module uses DBIx::SQLEngine to achieve a degree of database vendor-independence</a></strong><br />
+</dt>
+<dt><strong><a name="item_the_module_uses_dbd%3a%3aodbc_to_connect_via_a_dsn">The module uses DBD::ODBC to connect via a DSN to MS Access</a></strong><br />
+</dt>
+<dd>
+See below for more on this DSN (Data Source Name). Search down for 'access_dsn'.
+</dd>
+<p></p>
+<dt><strong><a name="item_all_candidate_output_table_names_are_obtained_from">All candidate output table names are obtained from the MS Access database</a></strong><br />
+</dt>
+<dd>
+You can have the module ignore input tables or views by passing to <code>get_access_table_names()</code> an array ref
+of the names of those tables you wish to output.
+</dd>
+<dd>
+<pre>
+        my($table_name) = $obj -&gt; get_access_table_names();</pre>
+</dd>
+<dd>
+<p>returns an array ref of all table names in the MS Access database, so all table names will be passed to convert().</p>
+</dd>
+<dd>
+<pre>
+        my($table_name) = $obj -&gt; get_access_table_names(['table a', 'table b']);</pre>
+</dd>
+<dd>
+<p>returns an array ref of table names to be passed to convert(), with tables called 'table a' and 'table b'
+being the only ones included in the list.</p>
+</dd>
+<p></p>
+<dt><strong><a name="item_all_output_table_names_can_be_converted_to_lower_c">All output table names can be converted to lower case</a></strong><br />
+</dt>
+<dd>
+Use the option new(lower_case =&gt; 1) to activate this action.
+</dd>
+<p></p>
+<dt><strong><a name="item_all_output_table_names_have_%27_%27_characters_in_">All output table names have ' ' characters in their names replaced by '_'</a></strong><br />
+</dt>
+<dt><strong><a name="item_all_output_column_names_are_from_the_ms_access_dat">All output column names are from the MS Access database</a></strong><br />
+</dt>
+<dt><strong><a name="item_all_output_column_names_have_mysql%2fpostgres_rese">All output column names have MySQL/Postgres reserved words prefixed with '_'</a></strong><br />
+</dt>
+<dd>
+That is, $original_column_name is replaced by ``_$original_column_name''.
+</dd>
+<dd>
+<p>The only known case (20-Jan-2004) is any column named 'Order', which will be called '_order' in the output database.</p>
+</dd>
+<p></p>
+<dt><strong><a name="item_all_output_column_names_can_be_converted_to_lower_">All output column names can be converted to lower case</a></strong><br />
+</dt>
+<dd>
+Use the option new(lower_case =&gt; 1) to activate this action.
+</dd>
+<p></p>
+<dt><strong><a name="item_varchar">All output columns are of type <code>varchar(255)</code></a></strong><br />
+</dt>
+<dd>
+Note: This will cause data to be truncated if input columns are longer than 255 characters.
+</dd>
+<p></p>
+<dt><strong><a name="item_this_module_has_only_been_tested_under_ms_windows_">This module has only been tested under MS Windows and MySQL</a></strong><br />
+</dt>
+<dd>
+It does contain, I believe, all the code required to run under Postgres. However, I have never tried to use a DSN
+under Unix, so YMMV.
+</dd>
+<p></p></dl>
+<p>
+</p>
+<hr />
+<h1><a name="distributions">Distributions</a></h1>
+<p>This module is available both as a Unix-style distro (*.tgz) and an
+ActiveState-style distro (*.ppd). The latter is shipped in a *.zip file.</p>
+<p>See <a href="http://savage.net.au/Perl-modules.html">http://savage.net.au/Perl-modules.html</a> for details.</p>
+<p>See <a href="http://savage.net.au/Perl-modules/html/installing-a-module.html">http://savage.net.au/Perl-modules/html/installing-a-module.html</a> for
+help on unpacking and installing each type of distro.</p>
+<p>
+</p>
+<hr />
+<h1><a name="constructor_and_initialization">Constructor and initialization</a></h1>
+<p><code>new(...)</code> returns a <code>DBIx::MSAccess:Convert2Db</code> object.</p>
+<p>This is the class's contructor.</p>
+<p>Usage: DBIx::MSAccess:Convert2Db -&gt; new().</p>
+<p>This option takes a set of options.</p>
+<dl>
+<dt><strong><a name="item_access_dsn">access_dsn</a></strong><br />
+</dt>
+<dd>
+The DSN (Data Source Name) of the MS Access database.
+</dd>
+<dd>
+<p>To start creating a DSN under Win2K, say, go to Start/Settings/Control Panel/Admin tools/Data Source (ODBC)/System DSN.</p>
+</dd>
+<dd>
+<p>Note: A System DSN is preferred because it is visible to all users, not just the currently logged in user.</p>
+</dd>
+<dd>
+<p>This option is mandatory.</p>
+</dd>
+<p></p>
+<dt><strong><a name="item_db_username">db_username</a></strong><br />
+</dt>
+<dd>
+The user name to use to log in to the output database.
+</dd>
+<dd>
+<p>This might be something like</p>
+</dd>
+<dd>
+<pre>
+        ($^O eq 'MSWin32') ? 'root' : 'postgres'</pre>
+</dd>
+<dd>
+<p>if you are using MySQL under Windows and Postgres under Unix.</p>
+</dd>
+<dd>
+<p>The default is the empty string.</p>
+</dd>
+<p></p>
+<dt><strong><a name="item_db_password">db_password</a></strong><br />
+</dt>
+<dd>
+The password to use to log in to the output database.
+</dd>
+<dd>
+<p>This might be something like</p>
+</dd>
+<dd>
+<pre>
+        ($^O eq 'MSWin32') ? 'pass' : ''</pre>
+</dd>
+<dd>
+<p>if you are using MySQL under Windows and Postgres under Unix.</p>
+</dd>
+<dd>
+<p>The default is the empty string.</p>
+</dd>
+<p></p>
+<dt><strong><a name="item_db_name">db_name</a></strong><br />
+</dt>
+<dd>
+The output database name.
+</dd>
+<dd>
+<p>This option is mandatory.</p>
+</dd>
+<p></p>
+<dt><strong><a name="item_driver">driver</a></strong><br />
+</dt>
+<dd>
+The output database driver.
+</dd>
+<dd>
+<p>This might be something like</p>
+</dd>
+<dd>
+<pre>
+        ($^O eq 'MSWin32') ? 'mysql' : 'Pg'</pre>
+</dd>
+<dd>
+<p>This option is mandatory.</p>
+</dd>
+<p></p>
+<dt><strong><a name="item_lower_case">lower_case</a></strong><br />
+</dt>
+<dd>
+An option, either 0 or 1, to activate the conversion of all table names and column names to lower case, in the
+output database.
+</dd>
+<dd>
+<p>The default is 0.</p>
+</dd>
+<p></p>
+<dt><strong><a name="item_null_to_blank">null_to_blank</a></strong><br />
+</dt>
+<dd>
+An option, either 0 or 1, to activate the conversion of all null values to the empty string, in the output database.
+</dd>
+<dd>
+<p>The default is 0.</p>
+</dd>
+<p></p>
+<dt><strong><a name="item_verbose">verbose</a></strong><br />
+</dt>
+<dd>
+An option, either 0 or 1, to activate the writing to disk of various bits of information.
+</dd>
+<dd>
+<p>The default is 0.</p>
+</dd>
+<dd>
+<p>The output disk file name is determined by this code:</p>
+</dd>
+<dd>
+<pre>
+        $$self{'_temp'}          = ($^O eq 'MSWin32') ? 'temp' : 'tmp';
+        $$self{'_log_file_name'} = &quot;/$$self{'_temp'}/msaccess2db.log&quot;;</pre>
+</dd>
+<p></p></dl>
+<p>
+</p>
+<hr />
+<h1><a name="method:_get_access_table_names([an_array_ref_of_table_names_to_output])">Method: get_access_table_names([An array ref of table names to output])</a></h1>
+<p>Returns an array ref of table name to be passed to convert().</p>
+<p>
+</p>
+<hr />
+<h1><a name="method:_convert($table_name)">Method: <code>convert($table_name)</code></a></h1>
+<p>Returns nothing.</p>
+<p>Converts one table from MS Access format to MySQL/Postgres/Other format.</p>
+<p>It's normally called like this:</p>
+<pre>
+        my($table_name) = $obj -&gt; get_access_table_names();</pre>
+<pre>
+        $obj -&gt; convert($_) for @$table_name;</pre>
+<p>
+</p>
+<hr />
+<h1><a name="example_code">Example code</a></h1>
+<p>See the examples/ directory in the distro.</p>
+<p>Note: The example uses a module called Error.</p>
+<p>Note: Activestate-style distros do not contain this directory :-(.</p>
+<p>
+</p>
+<hr />
+<h1><a name="required_modules">Required Modules</a></h1>
+<p>Carp, DBI, DBD::ODBD, DBIx::SQLEngine.</p>
+<p>
+</p>
+<hr />
+<h1><a name="changes">Changes</a></h1>
+<p>See Changes.txt.</p>
+<p>
+</p>
+<hr />
+<h1><a name="author">Author</a></h1>
+<p><code>DBIx::MSAccess:Convert2Db</code> was written by Ron Savage <em>&lt;<a href="mailto:ron@savage.net.au">ron@savage.net.au</a>&gt;</em> in 2004.</p>
+<p>Home page: <a href="http://savage.net.au/index.html">http://savage.net.au/index.html</a></p>
+<p>
+</p>
+<hr />
+<h1><a name="copyright">Copyright</a></h1>
+<p>Australian copyright (c) 2004, Ron Savage. All rights reserved.</p>
+<pre>
+        All Programs of mine are 'OSI Certified Open Source Software';
+        you can redistribute them and/or modify them under the terms of
+        The Artistic License, a copy of which is available at:
+        <a href="http://www.opensource.org/licenses/index.html">http://www.opensource.org/licenses/index.html</a></pre>
+
+</body>
+
+</html>
