@@ -1,8 +1,8 @@
-Convert2Db.pm
+Build.PL
 Changes.txt
+MANIFEST			This list of files
+META.yml
 Makefile.PL
-MANIFEST
-Convert2Db.html
-README
 examples/msaccess2db.pl
+lib/DBIx/MSAccess/Convert2Db.pm
 t/test.t

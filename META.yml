@@ -1,0 +1,14 @@
+--- #YAML:1.0
+name: DBIx-MSAccess-Convert2Db
+version: 1.02
+author:
+  - Ron Savage <ron@savage.net.au>
+abstract: |-
+  Convert an MS Access database into a MySQL/Postgres/Other database
+license: artistic
+requires:
+  Carp: 0
+  DBI: 0
+  DBIx::SQLEngine: 0
+provides: {}
+generated_by: Module::Build version 0.24

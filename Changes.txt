@@ -1,5 +1,13 @@
 Revision history for Perl extension DBIx::MSAccess:Convert2Db.
 
+1.02  Wed Apr  7 11:46:41 2004
+	- Recent changes to DBIx::SQLEngine resulted in the following SQL being generated to
+		determine the names of the columns in the Access database:
+			select * from `$table_name` limit 1
+		but the limit clause does not work with Access. I have replaced that SQL with:
+			select top 1 * from `$table_name`
+	- To build this module, you will now need Module::Build
+
 1.01  Wed Jan 21 13:48:00 2004
 	- Change handing of verbose option to only save log if verbose is true
 

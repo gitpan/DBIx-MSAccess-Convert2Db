@@ -38,7 +38,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 
 );
-our $VERSION = '1.01';
+our $VERSION = '1.02';
 
 # -----------------------------------------------
 
@@ -232,7 +232,7 @@ sub do_drop_table
 sub get_access_column_names
 {
 	my($self, $table_name)	= @_;
-	my $data				= $$self{'_access_engine'} -> fetch_one_row(table => "$$self{'_quote'}$table_name$$self{'_quote'}");
+	my $data				= $$self{'_access_engine'} -> fetch_one_row(sql => "select top 1 * from $$self{'_quote'}$table_name$$self{'_quote'}", limit => 0);
 
 	[sort keys %$data];
 
