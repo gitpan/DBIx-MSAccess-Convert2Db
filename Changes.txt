@@ -1,5 +1,9 @@
 Revision history for Perl extension DBIx::MSAccess::Convert2Db.
 
+1.04  Mon Jul 19 14:43:00 2004
+	- Change Makefile.PL to coexist with Module::Build
+	- Add t/pod.t to test all PODs
+
 1.03  Fri Apr 16 11:09:36 2004
 	- There are no code changes in this version
 	- Stop shipping Makefile.PL. Encourage users to install Module::Build, and to

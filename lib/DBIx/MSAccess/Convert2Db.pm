@@ -38,7 +38,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 
 );
-our $VERSION = '1.03';
+our $VERSION = '1.04';
 
 # -----------------------------------------------
 
@@ -415,7 +415,13 @@ It can convert an MS Access database into one in MySQL/Postgres/Other format.
 The conversion is mindless. In particular, this version does not even use the Date::MSAccess module to convert
 dates.
 
-Hopefully, this means the output database is an exact copy of the input one, apart from perhaps some column truncation.
+Hence you are encouraged to I<not> use this module, but rather to visit:
+
+	http://dev.mysql.com/tech-resources/articles/migrating-from-microsoft.html
+
+In other words, I wrote this module for my own use.
+
+Hopefully, the output database is an exact copy of the input one, apart from perhaps some column truncation.
 
 Things to note:
 
@@ -423,7 +429,7 @@ Things to note:
 
 =item The module does not create the output database
 
-You do that.
+You do that before using this module.
 
 =item The module uses DBIx::SQLEngine to achieve a degree of database vendor-independence
 
