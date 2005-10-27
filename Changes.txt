@@ -1,5 +1,14 @@
 Revision history for Perl extension DBIx::MSAccess::Convert2Db.
 
+1.05  Thu Oct 27 19:40:00 2005
+	- Simplify code in new() to no longer check if caller is an object
+		as per the new standard on such matters
+	- Regenerate META.yml with Module::Build V 0.2611 to correct a faulty
+		META.yml output by V 0.24 which falsely said 'provides: {}',
+		which in turn stopped the PAUSE indexer from finding the module file,
+		which in turn meant this module might be omitted from the master index:
+		ftp://pause.perl.org/pub/PAUSE/modules/01modules.index.html
+
 1.04  Mon Jul 19 14:43:00 2004
 	- Change Makefile.PL to coexist with Module::Build
 	- Add t/pod.t to test all PODs

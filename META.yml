@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name: DBIx-MSAccess-Convert2Db
-version: 1.04
+version: 1.05
 author:
   - Ron Savage <ron@savage.net.au>
 abstract: |-
@@ -13,5 +13,8 @@ requires:
 build_requires:
   Test::More: 0
   Test::Pod: 0
-provides: {}
-generated_by: Module::Build version 0.24
+provides:
+  DBIx::MSAccess::Convert2Db:
+    file: lib/DBIx/MSAccess/Convert2Db.pm
+    version: 1.05
+generated_by: Module::Build version 0.2611
