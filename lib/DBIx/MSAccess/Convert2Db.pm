@@ -38,7 +38,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 
 );
-our $VERSION = '1.05';
+our $VERSION = '1.08';
 
 # -----------------------------------------------
 
@@ -596,14 +596,6 @@ Note: The example uses a module called Error.
 
 Note: Activestate-style distros do not contain this directory :-(.
 
-=head1 Required Modules
-
-Carp, DBI, DBD::ODBD, DBIx::SQLEngine.
-
-=head1 Changes
-
-See Changes.txt.
-
 =head1 Author
 
 C<DBIx::MSAccess::Convert2Db> was written by Ron Savage I<E<lt>ron@savage.net.auE<gt>> in 2004.
@@ -612,8 +604,7 @@ Home page: http://savage.net.au/index.html
 
 =head1 Copyright
 
-Australian copyright (c) 2004, Ron Savage. All rights reserved.
-
+Australian copyright (c) 2004, Ron Savage.
 	All Programs of mine are 'OSI Certified Open Source Software';
 	you can redistribute them and/or modify them under the terms of
 	The Artistic License, a copy of which is available at:

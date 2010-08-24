@@ -1,20 +1,26 @@
---- #YAML:1.0
-name: DBIx-MSAccess-Convert2Db
-version: 1.05
+---
+abstract: 'Convert an MS Access database into a MySQL/Postgres/Other database'
 author:
-  - Ron Savage <ron@savage.net.au>
-abstract: |-
-  Convert an MS Access database into a MySQL/Postgres/Other database
+  - 'Ron Savage <ron@savage.net.au>'
+build_requires:
+  Test::More: 0
+  Test::Pod: 0
+configure_requires:
+  Module::Build: 0.36
+generated_by: 'Module::Build version 0.3607'
 license: artistic
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: DBIx-MSAccess-Convert2Db
+provides:
+  DBIx::MSAccess::Convert2Db:
+    file: lib/DBIx/MSAccess/Convert2Db.pm
+    version: 1.08
 requires:
   Carp: 0
   DBI: 0
   DBIx::SQLEngine: 0
-build_requires:
-  Test::More: 0
-  Test::Pod: 0
-provides:
-  DBIx::MSAccess::Convert2Db:
-    file: lib/DBIx/MSAccess/Convert2Db.pm
-    version: 1.05
-generated_by: Module::Build version 0.2611
+resources:
+  license: http://www.perlfoundation.org/artistic_license_1_0
+version: 1.08

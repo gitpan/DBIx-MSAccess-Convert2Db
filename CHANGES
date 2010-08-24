@@ -1,5 +1,16 @@
 Revision history for Perl extension DBIx::MSAccess::Convert2Db.
 
+1.08  Sun Feb 21 12:55:03 2010
+	- Remove text 'All rights reserved' (for Debian licensing).
+	- Remove POD heads 'Required Modules' and 'Changes'.
+
+1.07  Wed Feb 10 14:01:52 2010
+	- MANIFEST.SKIP updated to exclude MYMETA.yml. Add MYMETA.yml.
+
+1.06  Fri Nov 13 13:20:00 2009
+	- Run dos2unix
+	- Rename Changes.txt to CHANGES
+
 1.05  Thu Oct 27 19:40:00 2005
 	- Simplify code in new() to no longer check if caller is an object
 		as per the new standard on such matters
